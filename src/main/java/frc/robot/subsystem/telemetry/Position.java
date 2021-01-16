@@ -10,7 +10,6 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 public class Position{
-
     //x1 = frontSensor, x2 = rearSensor, y = buttSensor
     private double x1;
     private double x2;
@@ -29,6 +28,11 @@ public class Position{
 
     public Position(){
 
+    }
+
+    public Position(double x, double y){
+        this.x1 = x;
+        this.y = y;
     }
 
     public void init(PortMan portMan) throws Exception{
@@ -58,6 +62,8 @@ public class Position{
     }
 
     public void updatePosition(){
+        updateLidars();
+        updateUltrasound();
         //some fusion of lidars and ultrasound to make the position accurate, then update x1, x2, y
     }
 

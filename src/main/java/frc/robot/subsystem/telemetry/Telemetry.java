@@ -18,70 +18,70 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 
-public class Telemetry extends SubsystemBase{
-    
+public class Telemetry extends SubsystemBase{ 
     //private LidarPWM frontLidar, rearLidar, buttLidar;
-    private TalonSRX testMotor = new TalonSRX(portMan.acquirePort(PortMan.can_18_label, "Position.testMotor"));
+    private TalonSRX testMotor;
     private static Logger logger = Logger.getLogger(Telemetry.class.getName());
 
     //distance between side sensors
     private double betweenDistance;
     private double tolerance = 5;
-    private double targetDistance;
+    private Position target;
+    private Position position;
 
-    private double x1, x2, y;
+    public Telemetry(Position robotPosition, Position targetPosition) {
+        position = robotPosition;
+        target = targetPosition;
+    }
 
-    public Telemetry(double distance, Position robotPosition) {
-        targetDistance = distance;
-        x1 = robotPosition.getx1();
-        x2 = robotPosition.getx2();
-        y = robotPosition.gety();
+    public void init(PortMan portMan) throws Exception{
+        logger.entering(Telemetry.class.getName(), "init()");
+        
+        testMotor = new TalonSRX(portMan.acquirePort(PortMan.can_18_label, "Telemetry.testMotor"));
+
+        CameraServer.getInstance().startAutomaticCapture();
+
+        logger.exiting(Telemetry.class.getName(), "init()");
     }
 
     public boolean isSquare(){
-
-        if (Math.abs(x1-x2) > tolerance)
+        if (Math.abs(position.getx1()-position.getx2()) > tolerance)
             squareUp();
         return true;
-        
     }
     
     public void squareUp(){
-
         if (!isSquare()){
-
-            double errorDistance = Math.abs(x1-x2);
+            double errorDistance = Math.abs(position.getx1()-position.getx2());
             double angleError = Math.atan(distanceError/betweenDistance);
 
             double distanceToMove = angleError*betweenLidarDistance;
 
-            if (frontLidarDistance < rearLidarDistance){
+            if (position.getx1() < position.getx2()){
                 //move front wheels right distanceToMove
             } else{
                 //move front wheels left distanceToMove
             }
 
-            frontLidarDistance = frontLidar.getDistance();
-            rearLidarDistance = rearLidar.getDistance();
+            position.updatePosition(); 
         }
 
         while(!isSquare()){
-            if (frontLidarDistance < rearLidarDistance){
+            if (position.getx1() < position.getx2()){
                 //move back wheels left correction, turn right
             } else{
                 //move back wheels right correction, turn left
             }
-            frontLidarDistance = frontLidar.getDistance();
-            rearLidarDistance = rearLidar.getDistance();
+            
+            position.updatePosition();
         }     
-        
     }
 
     public void moveHorizontal(){
-        double distanceError = Math.abs(frontLidarDistance - targetDistance);
+        double distanceError = Math.abs(position.getx1() - target.getx1());
 
         if (distanceError > tolerance){
-            if (frontLidarDistance > targetDistance){
+            if (position.getx1() > target.getx1()){
                 //move left distanceError
             } else{
                 //move right distanceError
@@ -90,13 +90,13 @@ public class Telemetry extends SubsystemBase{
     }
 
     public void moveVertical(){
-        double distanceError = Math.abs(frontLidarDistance - targetDistance);
+        double distanceError = Math.abs(position.gety() > target.gety());
 
         if (distanceError > tolerance){
-            if (frontLidarDistance > targetDistance){
-                //move left distanceError
+            if (position.gety() < target.gety()){
+                //move forward distanceError
             } else{
-                //move right distanceError
+                //move back distanceError
             }
         }
     }
@@ -106,11 +106,11 @@ public class Telemetry extends SubsystemBase{
     }
 
     public void setTolerance(double tol){
-        lidarTolerance = tol;
+        tolerance = tol;
     }
 
-    public double getBetweenLidar(){
-        return betweenLidarDistance;
+    public double getBetween(){
+        return betweenDistance;
     }
 
     public void testMotor(double po){
