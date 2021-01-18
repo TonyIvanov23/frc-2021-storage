@@ -17,6 +17,9 @@ import java.util.logging.Logger;
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
+import edu.wpi.first.wpilibj.geometry.Translation2d;
+import frc.robot.subsystem.SubsystemFactory;
+
 
 public class Telemetry extends SubsystemBase{ 
     //private LidarPWM frontLidar, rearLidar, buttLidar;
@@ -83,8 +86,10 @@ public class Telemetry extends SubsystemBase{
         if (distanceError > tolerance){
             if (position.getx1() > target.getx1()){
                 //move left distanceError
+                SubsystemFactory.getInstance().getDriveTrain().drive(new Translation2d(0.3, 0), 0 ,true);
             } else{
                 //move right distanceError
+                SubsystemFactory.getInstance().getDriveTrain().drive(new Translation2d(-0.3, 0), 0 ,true);
             }
         }
     }
@@ -95,8 +100,10 @@ public class Telemetry extends SubsystemBase{
         if (distanceError > tolerance){
             if (position.gety() < target.gety()){
                 //move forward distanceError
+                SubsystemFactory.getInstance().getDriveTrain().drive(new Translation2d(0, 0.3), 0,true);
             } else{
                 //move back distanceError
+                SubsystemFactory.getInstance().getDriveTrain().drive(new Translation2d(0, -0.3), 0, true);
             }
         }
     }
