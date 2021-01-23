@@ -24,6 +24,10 @@ import frc.robot.util.OzoneLogger;
 import frc.robot.subsystem.SBInterface;
 import frc.robot.subsystem.controlpanel.ControlPanelSBTab;
 
+import frc.robot.subsystem.telemetry.commands.Auton;
+import frc.robot.subsystem.telemetry.Position;
+import frc.robot.subsystem.telemetry.Telemetry;
+
 /**
  * The VM is configured to automatically run this class, and to call the
  * functions corresponding to each mode, as described in the TimedRobot
@@ -39,7 +43,9 @@ public class Robot extends TimedRobot {
 
   private DisplayManager dManager;
 
-  private TestAuton test;
+  //private TestAuton test;
+  private Auton test;
+  private Telemetry telemetry;
 
   /**
    * This function is run when the robot is first started up and should be
@@ -47,7 +53,6 @@ public class Robot extends TimedRobot {
    */
   @Override
   public void robotInit() {
-    subsystemFactory = SubsystemFactory.getInstance(isReal());
     OzoneLogger.getInstance().init(Level.FINE);
     dManager = new DisplayManager();
 
@@ -91,8 +96,8 @@ public class Robot extends TimedRobot {
   @Override
   public void autonomousInit() {
     CommandScheduler.getInstance().run();
-    
-    test = new TestAuton();
+
+    test = new Auton(telemetry);
     test.initialize();
     test.execute();
   }

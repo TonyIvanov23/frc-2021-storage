@@ -25,6 +25,7 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.OzoneException;
 import frc.robot.subsystem.PortMan;
 import frc.robot.subsystem.telemetry.Telemetry;
+import frc.robot.subsystem.telemetry.Position;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
@@ -43,7 +44,8 @@ public class ControlPanel extends SubsystemBase {
     private String colorString;
 
     private Telemetry telemetry;
-    private int targetDistance = 0;
+    private Position position;
+    //private int targetDistance = 0;
     private Color targetColor;
 
     private double velocity;
@@ -57,7 +59,7 @@ public class ControlPanel extends SubsystemBase {
     private boolean isControlSpinnerUp;
     private DoubleSolenoid pusher;
 
-    public void init(PortMan portMan, Telemetry t) throws Exception {
+    public void init(PortMan portMan, Position p) throws Exception {
       logger.entering(ControlPanel.class.getName(), "init()");
 
       m_colorSensor = new ColorSensorV3(I2C.Port.kOnboard);
@@ -72,7 +74,7 @@ public class ControlPanel extends SubsystemBase {
 
       motor = new TalonSRX(portMan.acquirePort(PortMan.can_27_label, "ControlPanel.spinner"));
 
-      telemetry = t;
+      position = p;
 
       pValue = .2;
       iValue = 0;

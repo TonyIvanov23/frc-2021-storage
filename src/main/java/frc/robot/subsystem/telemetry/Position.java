@@ -1,49 +1,58 @@
-package frc.robot.subsystem.position;
+package frc.robot.subsystem.telemetry;
 
 import edu.wpi.first.cameraserver.CameraServer;
-import edu.wpi.first.wpilibj.MedianFilter;
-import edu.wpi.first.wpilibj2.command.SubsystemBase;
+//import edu.wpi.first.wpilibj.MedianFilter;
+//import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.subsystem.PortMan;
 import java.util.logging.Logger;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+//import com.ctre.phoenix.motorcontrol.ControlMode;
+//import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 public class Position{
     //x1 = frontSensor, x2 = rearSensor, y = buttSensor
-    private double x1;
-    private double x2;
-    private double y;
+    private double y1;
+    private double y2;
+    private double x;
 
     private LidarPWM frontLidar, rearLidar, buttLidar;
     //private TalonSRX testMotor;
-    private double frontLidarOffset = 0;
-    private double rearLidarOffset = 0;
+    //private double frontLidarOffset = 0;
+    //private double rearLidarOffset = 0;
 
     private static Logger logger = Logger.getLogger(Position.class.getName());
 
-    private MedianFilter filterFront;
-    private MedianFilter filterRear;
-    private MedianFilter filterButt;
+    //private MedianFilter filterFront;
+    //private MedianFilter filterRear;
+    //private MedianFilter filterButt;
+
+    //private double frontLidarDistance;
+    //private double rearLidarDistance;
+    //private double buttLidarDistance;
+
+    private double targetx;
+    private double targety;
+
+    private double halfLength = 38.1;
 
     public Position(){
 
     }
 
     public Position(double x, double y){
-        this.x1 = x;
-        this.y = y;
+        this.targetx = x;
+        this.targety = y;
     }
 
     public void init(PortMan portMan) throws Exception{
         logger.entering(Position.class.getName(), "init()");
 
-        frontLidar = new LidarPWM(portMan.acquirePort(PortMan.digital0_label, "Position.frontLidar"));
+        frontLidar = new LidarPWM(portMan.acquirePort(PortMan.digital6_label, "Position.frontLidar"));
         rearLidar = new LidarPWM(portMan.acquirePort(PortMan.digital1_label, "Position.rearLidar"));
-        buttLidar = new LidarPWM(portMan.acquirePort(PortMan.digital2_label, "Position.bttLidar"));
-        filterFront = new MedianFilter(10);
-        filterRear = new MedianFilter(10);
-        filterButt = new MedianFilter(10);
+        buttLidar = new LidarPWM(portMan.acquirePort(PortMan.digital2_label, "Position.buttLidar"));
+        //filterFront = new MedianFilter(10);
+        //filterRear = new MedianFilter(10);
+        //filterButt = new MedianFilter(10);
         //testMotor = new TalonSRX(portMan.acquirePort(PortMan.can_18_label, "Position.testMotor"));
 
         CameraServer.getInstance().startAutomaticCapture();
@@ -52,9 +61,9 @@ public class Position{
     }
 
     public void updateLidars(){
-        frontLidarDistance = frontLidar.getDistance();
-        rearLidarDistance = rearLidar.getDistance();
-        buttLidarDistance = buttLidar.getDistance();
+        y1 = frontLidar.getDistance() + halfLength;
+        y2 = rearLidar.getDistance() + halfLength;
+        x = buttLidar.getDistance() + halfLength;
     }
 
     public void updateUltrasound(){
@@ -63,7 +72,7 @@ public class Position{
 
     public void updatePosition(){
         updateLidars();
-        updateUltrasound();
+        //updateUltrasound();
         //some fusion of lidars and ultrasound to make the position accurate, then update x1, x2, y
     }
 
@@ -75,15 +84,25 @@ public class Position{
         return filterRear.calculate(rearLidar.getDistance());
     }*/
 
-    public double getx1(){
-        return x1;
+    public double gety1(){
+        return y1;
     }
 
-    public double getx2(){
-        return x2;
+    public double gety2(){
+        return y2;
     }
 
-    public double gety(){
-        return y;
+    public double getx(){
+        return x;
+    }
+
+    public double getTargetx()
+    {
+        return targetx;
+    }
+
+    public double getTargety()
+    {
+        return targety;
     }
 }

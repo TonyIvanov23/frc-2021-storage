@@ -25,7 +25,8 @@ import frc.robot.subsystem.intake.commands.IntakeSpinForward;
 import frc.robot.subsystem.intake.commands.IntakeStop;
 import frc.robot.subsystem.intake.commands.IntakeUp;
 import frc.robot.subsystem.telemetry.Telemetry;
-import frc.robot.subsystem.telemetry.commands.SquareSelf;
+import frc.robot.subsystem.telemetry.Position;
+import frc.robot.subsystem.telemetry.commands.Auton;
 import frc.robot.subsystem.onewheelshooter.OneWheelShooter;
 import frc.robot.subsystem.winch.Winch;
 import frc.robot.subsystem.winch.commands.WinchUp;
@@ -79,6 +80,8 @@ public class SubsystemFactory {
     private DrivetrainSubsystem driveTrain;
     private Intake intake;
     private Winch winch;
+    private Position position;
+    private Position target;
     
     private static ArrayList<SBInterface> subsystemInterfaceList;
 
@@ -100,7 +103,7 @@ public class SubsystemFactory {
         allMACs.put("00:80:2F:17:D7:4C", "RIO2"); //usb0
     }
 
-    public static SubsystemFactory getInstance(boolean b) {
+    public static SubsystemFactory getInstance() {
 
         if (me == null) {
             me = new SubsystemFactory();
@@ -259,7 +262,7 @@ public class SubsystemFactory {
          */
 
         controlPanel = new ControlPanel();
-        controlPanel.init(portMan, telemetry);
+        controlPanel.init(portMan, position);
         displayManager.addCP(controlPanel);
 
         
@@ -317,6 +320,13 @@ public class SubsystemFactory {
 
         ControlPanelMode controlPanelMode = new ControlPanelMode(transport, intake, controlPanel, oneWheelShooter);
         OI.getInstance().bind(controlPanelMode, OI.button6, OI.WhenPressed);
+
+        // Position
+        position = new Position();
+        position.init(portMan);
+        displayManager.addPosition(position);
+        Command auton = new Auton(telemetry);
+        OI.getInstance().bind(auton, OI.LeftJoyButton10, OI.WhenPressed);
     }
     /**
      * 
@@ -327,14 +337,14 @@ public class SubsystemFactory {
     private void initFootball(PortMan portMan) throws Exception {
         logger.info("Initializing Football");
         /**
-         * All of the Telemery Stuff goes here
+         * All of the Position Stuff goes here
          */
 
-        telemetry = new Telemetry();
-        telemetry.init(portMan);
-        displayManager.addTelemetry(telemetry);
-        Command sqs = new SquareSelf(telemetry, 10);
-        OI.getInstance().bind(sqs, OI.LeftJoyButton10, OI.WhenPressed);
+        position = new Position();
+        position.init(portMan);
+        displayManager.addPosition(position);
+        Command auton = new Auton(telemetry);
+        OI.getInstance().bind(auton, OI.LeftJoyButton10, OI.WhenPressed);
         /**
          * All of the Climber stuff goes here
          */
@@ -358,7 +368,7 @@ public class SubsystemFactory {
          */
 
         controlPanel = new ControlPanel();
-        controlPanel.init(portMan, telemetry);
+        controlPanel.init(portMan, position);
         displayManager.addCP(controlPanel);
         RotateToColor dc = new RotateToColor(controlPanel, "Blue");
         OI.getInstance().bind(dc, OI.LeftJoyButton2, OI.WhenPressed);
@@ -455,6 +465,11 @@ public class SubsystemFactory {
 
     public Transport getTransport() {
         return transport;
+    }
+
+    public DrivetrainSubsystem getDriveTrain()
+    {
+        return driveTrain;
     }
 
     private String getBotName() throws Exception {

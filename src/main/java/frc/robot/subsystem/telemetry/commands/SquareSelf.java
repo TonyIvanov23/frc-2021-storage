@@ -29,11 +29,11 @@ public class SquareSelf extends CommandBase {
   }
 
   // Called when the command is initially scheduled.
-  @Override
-  public void initialize() {
-  stop = false;
+  //@Override
+ // public void initialize() {
+  //stop = false;
 
-  if (Math.abs(telemetry.getFrontLidarDistance()-targetDistance) > telemetry.getTolerance() || Math.abs(telemetry.getRearLidarDistance()-targetDistance) > telemetry.getTolerance() || Math.abs(telemetry.getFrontLidarDistance()-telemetry.getRearLidarDistance()) > telemetry.getTolerance())
+ /* if (Math.abs(telemetry.getFrontLidarDistance()-targetDistance) > telemetry.getTolerance() || Math.abs(telemetry.getRearLidarDistance()-targetDistance) > telemetry.getTolerance() || Math.abs(telemetry.getFrontLidarDistance()-telemetry.getRearLidarDistance()) > telemetry.getTolerance())
   {
     double angleError = Math.atan((Math.max(telemetry.getFrontLidarDistance(), telemetry.getRearLidarDistance())-Math.min(telemetry.getFrontLidarDistance(), telemetry.getRearLidarDistance()))/telemetry.getBetweenLidar());
 
@@ -130,4 +130,6 @@ public class SquareSelf extends CommandBase {
   public boolean isFinished() {
     return stop;
   }
+  */
 }
+

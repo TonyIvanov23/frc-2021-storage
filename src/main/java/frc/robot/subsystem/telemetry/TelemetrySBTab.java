@@ -5,7 +5,7 @@
 /* the project.                                                               */
 /*----------------------------------------------------------------------------*/
 
-package frc.robot.subsystem.telemetry;
+/*package frc.robot.subsystem.telemetry;
 
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
@@ -15,7 +15,7 @@ import frc.robot.subsystem.SBInterface;
 /**
  * Add your docs here.
  */
-public class TelemetrySBTab implements SBInterface {
+/*public class TelemetrySBTab implements SBInterface {
     public Telemetry telemetry;
     public ShuffleboardTab tab;
 
@@ -43,3 +43,4 @@ public class TelemetrySBTab implements SBInterface {
         telemetry.setTolerance(tolerance.getDouble(5.0));
     }
 }
+*/
